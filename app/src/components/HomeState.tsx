@@ -52,35 +52,35 @@ function HomeState({ setState }: StateProps) {
             <br />
             Modeling
           </ImgLabel>
-          <Img src={import.meta.env.BASE_URL + "icons/modeling.svg"} />
+          <Img src={"/ProcessDoctor/icons/modeling.svg"} />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Simulator)}>
           <ImgLabel>
             <br />
             Simulation
           </ImgLabel>
-          <Img src={import.meta.env.BASE_URL + "icons/simulation.svg"} />
+          <Img src={"/ProcessDoctor/icons/simulation.svg"} />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Conformance)}>
           <ImgLabel>
             <br />
             Conformance
           </ImgLabel>
-          <Img src={import.meta.env.BASE_URL + "icons/conformance.svg"} />
+          <Img src={"/ProcessDoctor/icons/conformance.svg"} />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Discovery)}>
           <ImgLabel>
             <br />
             Discovery
           </ImgLabel>
-          <Img src={import.meta.env.BASE_URL + "icons/discovery.svg"} />
+          <Img src={"/ProcessDoctor/icons/discovery.svg"} />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.EventLogGeneration)}>
           <ImgLabel>
             <br />
             Log Generation
           </ImgLabel>
-          <Img src={import.meta.env.BASE_URL + "icons/logGeneration.svg"} />
+          <Img src={"/ProcessDoctor/icons/logGeneration.svg"} />
         </ImgContainer>
       </FlexBox>
     </Container>
