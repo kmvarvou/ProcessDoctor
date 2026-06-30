@@ -2,7 +2,7 @@
   "name": "dcr-js",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://hugoalopez-dtu.github.io/dcr-js/",
+  "homepage": "https://kmvarvou.github.io/ProcessDoctor/",
   "scripts": {
     "start": "yarn workspace app start",
     "predeploy": "yarn workspace app predeploy"
