@@ -45,42 +45,49 @@ const ImgLabel = styled.label`
 function HomeState({ setState }: StateProps) {
   return (
     <Container>
-      <Header>ProcessDoCtoR</Header>
+      <Header>
+        Process{" "}
+        <span style={{ color: "green" }}>D</span>
+        o
+        <span style={{ color: "orange" }}>C</span>
+        to
+        <span style={{ color: "#1E90FF" }}>R</span>
+      </Header>
       <FlexBox direction="row" $justify="space-around">
         <ImgContainer onClick={() => setState(StateEnum.Modeler)}>
           <ImgLabel>
             <br />
             Modeling
           </ImgLabel>
-          <Img src={"/ProcessDoctor/icons/modeling.svg"} />
+          <Img src="/ProcessDoctor/icons/modeling.svg" />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Simulator)}>
           <ImgLabel>
             <br />
             Simulation
           </ImgLabel>
-          <Img src={"/ProcessDoctor/icons/simulation.svg"} />
+          <Img src="/ProcessDoctor/icons/simulation.svg" />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Conformance)}>
           <ImgLabel>
             <br />
             Conformance
           </ImgLabel>
-          <Img src={"/ProcessDoctor/icons/conformance.svg"} />
+          <Img src="/ProcessDoctor/icons/conformance.svg" />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.Discovery)}>
           <ImgLabel>
             <br />
             Discovery
           </ImgLabel>
-          <Img src={"/ProcessDoctor/icons/discovery.svg"} />
+          <Img src="/ProcessDoctor/icons/discovery.svg" />
         </ImgContainer>
         <ImgContainer onClick={() => setState(StateEnum.EventLogGeneration)}>
           <ImgLabel>
             <br />
             Log Generation
           </ImgLabel>
-          <Img src={"/ProcessDoctor/icons/logGeneration.svg"} />
+          <Img src="/ProcessDoctor/icons/logGeneration.svg" />
         </ImgContainer>
       </FlexBox>
     </Container>

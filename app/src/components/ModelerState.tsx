@@ -97,11 +97,19 @@ const ModelerState = ({
 
 
 
+  function warnIfInvalidGuards(): boolean {
+    if (!modeler) return false;
+    const issues: string[] = modeler.validateGuards();
+    issues.forEach((msg: string) => toast.warning(msg));
+    return issues.length > 0;
+  }
+
   async function saveGraph() {
     if (!modeler) {
       return;
     }
 
+    if (warnIfInvalidGuards()) return false;
     let saved = false;
 
     try {
@@ -124,7 +132,7 @@ const ModelerState = ({
 
   useEffect(() => {
     // Fetch examples
-    fetch(import.meta.env.BASE_URL + "examples/generated_examples.txt")
+    fetch("/ProcessDoctor/examples/generated_examples.txt")
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -154,6 +162,7 @@ const ModelerState = ({
       parse(data)
         .then(() => {
           setGraphName(importName ? importName : initGraphName);
+          warnIfInvalidGuards();
         })
         .catch((e) => {
           console.log(e);
@@ -169,6 +178,7 @@ const ModelerState = ({
       return;
     }
 
+    if (warnIfInvalidGuards()) return;
     const data = await modeler.saveXML({ format: true });
     const blob = new Blob([data.xml]);
 
@@ -180,6 +190,7 @@ const ModelerState = ({
       return;
     }
 
+    if (warnIfInvalidGuards()) return;
     const data = await modeler.saveDCRXML();
     const blob = new Blob([data.xml]);
 
@@ -507,6 +518,21 @@ const ModelerState = ({
               );
               return;
             }
+
+            if (
+              !tdmOpen &&
+              Object.keys(elementRegistry._elements).find((element) => {
+                const bo =
+                  elementRegistry._elements[element].element.businessObject;
+                return bo.guard || bo.time || bo.eventData;
+              })
+            ) {
+              toast.warning(
+                "Test driven modeling not supported for guards, time constraints, and variables...",
+              );
+              return;
+            }
+
             setTdmOpen(!tdmOpen);
           }}
           $clicked={tdmOpen}
