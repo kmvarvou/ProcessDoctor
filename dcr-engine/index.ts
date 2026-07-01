@@ -11,6 +11,8 @@ import type {
   Nestings,
   RelationViolations,
   VariantLog,
+  VariableStore,
+  Value,
 } from "./src/types";
 import { isSubProcess } from "./src/types";
 import {
@@ -20,10 +22,13 @@ import {
   executeS,
   isEnabledS,
   isAcceptingS,
+  evaluateGuard,
+  validateGuardSyntax,
 } from "./src/executionEngine";
 import { moddleToDCR } from "./src/graphConversion";
 import {
   copyMarking,
+  parseDurationMs,
   filterVariantByTopPercentage,
   filterVariantByBottomPercentage,
   getBinaryVariants,
@@ -61,6 +66,8 @@ import { SAXParser } from "./src/parsers/SAXParser";
 export {
   type DCRGraph,
   type DCRGraphS,
+  type VariableStore,
+  type Value,
   type EventLog,
   type EventMap,
   type Marking,
@@ -77,6 +84,7 @@ export {
   isEnabled,
   moddleToDCR,
   copyMarking,
+  parseDurationMs,
   parseRoleLog,
   parseNonRoleLog,
   parseBinaryLog,
@@ -107,4 +115,6 @@ export {
   RegexEventStreamParser,
   DOMEventStreamParser,
   SAXParser,
+  evaluateGuard,
+  validateGuardSyntax,
 };
