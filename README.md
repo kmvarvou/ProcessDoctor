@@ -14,9 +14,11 @@ The extensions cover the following areas of DCR-js:
 
 * **BPMN import** — Sound BPMN models can be imported and converted to DCR graphs, helping users coming from imperative modeling notations transition into declarative process management.
 
+* **Process discovery** — The parsing and pre-processing stages around discovery were re-engineered for performance: logs are streamed incrementally instead of being loaded whole, and equivalent traces are collapsed before discovery, enabling large real-world event logs to be mined entirely in the browser.
+
 * **Simulation** — Step-based simulation extended with the time and data perspectives. When an event with an associated variable is executed, a pop-up prompts the user for a value. The simulation clock is user-controlled and can be advanced by a chosen amount. Traces can be exported as XES event logs including timestamps and variable values.
 
-* **Conformance checking** — Heatmap-based conformance checking extended to support guards, variables, and time constraints, distinguishing regular constraint violations from time violations.
+* **Conformance checking** — Extended with support for data guards and timed constraints, along with novel definitions for partial compliance, and re-engineered following the same trace-variant aggregation principle applied to discovery. Conformance runs in two modes, depending on the type of input model: control-flow mode, used for models without guards, variables, or time constraints, collapses traces into variants so each unique execution pattern is replayed once; data-aware mode, used for models with them, replays each trace individually while still grouping them visually by control-flow signature. Variant groups are marked conforming, violating, or partially violating, and each trace reports its number of control-flow and temporal violations. 
 
 What are DCR Graphs? A novel notation ideal for flexible processes, such as those in healthcare, municipal administration, or knowledge-intensive processes in general.
 
