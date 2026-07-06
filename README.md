@@ -12,7 +12,7 @@ The extensions cover the following areas of DCR-js:
 
 * **Elicitation** — Automatic extraction of DCR graphs, including variables, guards, and deadlines, from natural-language process descriptions using large language models.
 
-* **BPMN import** — Sound BPMN models can be imported and converted to DCR graphs, helping users coming from imperative modeling notations transition into declarative process management.
+* **BPMN import** — Well-formed BPMN models can be imported and converted to DCR graphs, helping users coming from imperative modeling notations transition into declarative process management.
 
 * **Process discovery** — The parsing and pre-processing stages around discovery were re-engineered for performance: logs are streamed incrementally instead of being loaded whole, and equivalent traces are collapsed before discovery, enabling large real-world event logs to be mined entirely in the browser.
 
@@ -26,6 +26,14 @@ For a formal definition of DCR graphs, please [read this paper](https://arxiv.or
 
 ## Instructions
 A demo video of the extended version of DCR-js can be watched [here](https://drive.google.com/file/d/1Bq_MyWjYrv3FAvXLdrEJDh0fllxPfiPd).
+
+## Getting started
+To follow along with the demo video and try out the basic functionalities yourself, head to the [live app](https://kmvarvou.github.io/ProcessDoctor/). Example files for each functionality shown in the video are provided in the [`bpm_demo`](bpm_demo) folder:
+
+* **Modeling & Simulation** — `bpm_demo/Modeling_Simulation/Multi-perspective medical prescription.xml`
+* **BPMN import** — `bpm_demo/BPMN Import/test_xor_model.bpmn`
+* **Process discovery** — [BPI Challenge 2019 event log](https://drive.google.com/file/d/1OLfE6Z9pRyNjc4UIJZiYRbfOwkD0bf_C/view?usp=drive_link)
+* **Conformance checking** — `bpm_demo/Conformance/Multi-perspective medical prescription.xml` together with `bpm_demo/Conformance/test event log.xes`
 
 ## License
 This package is published using an MIT license

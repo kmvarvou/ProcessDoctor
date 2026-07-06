@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="bpmn-js (https://demo.bpmn.io)" exporterVersion="18.16.0">
+  <bpmn:process id="proc_xor_with_and" isExecutable="true">
+    <bpmn:startEvent id="start" name="Start">
+      <bpmn:outgoing>f0</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="xor_split" name="XOR Split">
+      <bpmn:incoming>f0</bpmn:incoming>
+      <bpmn:outgoing>f2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0sk09rc</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:task id="taskC" name="Task A">
+      <bpmn:incoming>Flow_0sk09rc</bpmn:incoming>
+      <bpmn:outgoing>f8</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:task id="taskD" name="Task B">
+      <bpmn:incoming>f2</bpmn:incoming>
+      <bpmn:outgoing>f9</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="xor_join" name="XOR Join">
+      <bpmn:incoming>f8</bpmn:incoming>
+      <bpmn:incoming>f9</bpmn:incoming>
+      <bpmn:outgoing>f10</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="end" name="End">
+      <bpmn:incoming>f10</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="f0" sourceRef="start" targetRef="xor_split" />
+    <bpmn:sequenceFlow id="f2" sourceRef="xor_split" targetRef="taskD" />
+    <bpmn:sequenceFlow id="f8" sourceRef="taskC" targetRef="xor_join" />
+    <bpmn:sequenceFlow id="f9" sourceRef="taskD" targetRef="xor_join" />
+    <bpmn:sequenceFlow id="f10" sourceRef="xor_join" targetRef="end" />
+    <bpmn:sequenceFlow id="Flow_0sk09rc" sourceRef="xor_split" targetRef="taskC" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="proc_xor_with_and">
+      <bpmndi:BPMNShape id="start_di" bpmnElement="start">
+        <dc:Bounds x="152" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="xor_split_di" bpmnElement="xor_split" isMarkerVisible="true">
+        <dc:Bounds x="285" y="195" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="344.5" y="213" width="49" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="taskC_di" bpmnElement="taskC">
+        <dc:Bounds x="890" y="100" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="taskD_di" bpmnElement="taskD">
+        <dc:Bounds x="410" y="320" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="xor_join_di" bpmnElement="xor_join" isMarkerVisible="true">
+        <dc:Bounds x="1065" y="195" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="end_di" bpmnElement="end">
+        <dc:Bounds x="1222" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="f0_di" bpmnElement="f0">
+        <di:waypoint x="188" y="220" />
+        <di:waypoint x="285" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f2_di" bpmnElement="f2">
+        <di:waypoint x="310" y="245" />
+        <di:waypoint x="310" y="360" />
+        <di:waypoint x="410" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f8_di" bpmnElement="f8">
+        <di:waypoint x="990" y="140" />
+        <di:waypoint x="1090" y="140" />
+        <di:waypoint x="1090" y="195" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f9_di" bpmnElement="f9">
+        <di:waypoint x="510" y="360" />
+        <di:waypoint x="1090" y="360" />
+        <di:waypoint x="1090" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="f10_di" bpmnElement="f10">
+        <di:waypoint x="1115" y="220" />
+        <di:waypoint x="1222" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sk09rc_di" bpmnElement="Flow_0sk09rc">
+        <di:waypoint x="310" y="195" />
+        <di:waypoint x="310" y="140" />
+        <di:waypoint x="890" y="140" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
