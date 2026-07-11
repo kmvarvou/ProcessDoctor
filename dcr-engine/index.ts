@@ -23,9 +23,8 @@ import {
   executeS,
   isEnabledS,
   isAcceptingS,
-  evaluateGuard,
-  validateGuardSyntax,
 } from "./src/executionEngine";
+import { evaluateGuard, validateGuardSyntax } from "./src/guardEval";
 import { moddleToDCR } from "./src/graphConversion";
 import {
   copyMarking,
