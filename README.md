@@ -6,15 +6,15 @@ This repository extends [DCR-js](https://github.com/hugoalopez-dtu/dcr-js) with 
 
 > Varvoutas, K., Neuberger, J., López, H. A. Streamlining the education of Declarative Process Management with Process DoCtoR.
 
-The extensions cover the following areas of DCR-js:
+Compared with [DCR-js](https://github.com/hugoalopez-dtu/dcr-js), Process DoCtoR extends the original repository with the following features:
 
-* **Modeling** — Events can be associated with a variable (integer, boolean, or string) with an optional default value. Relations support FEEL-based guard expressions (e.g. `Diagnosis = true`) as well as time annotations: condition relations carry a minimum delay and response relations carry a deadline, both specified as ISO 8601 duration strings (e.g. `P30D` for 30 days, `PT2H` for 2 hours).
+* **Modeling** — Models in DCR are a compound of events, relations, and higher-order constructions (subprocesses/nestings). This new version extends control-flow constraints with time and data perspectives.   Events can be associated with a variable (integer, boolean, or string) with an optional default value. Relations support FEEL-based guard expressions (e.g. `Diagnosis = true`) as well as time annotations: condition relations carry a minimum delay and response relations carry a deadline, both specified as [ISO 8601 duration strings](https://en.wikipedia.org/wiki/ISO_8601#Durations) (e.g. `P30D` for 30 days, `PT2H` for 2 hours). We use the semantics specified in this [paper](https://link.springer.com/chapter/10.1007/978-3-032-28160-9_25).
 
-* **Elicitation** — Automatic extraction of DCR graphs, including variables, guards, and deadlines, from natural-language process descriptions using large language models.
+* **Elicitation** — In order to kickstart the models, we now provide the possibility to extract DCR graphs from textual descriptions. Thanks to LLM provide ways to automate the extraction of DCR graphs, including variables, guards, and deadlines. Our prompts and evaluation have been covered in [this paper](https://www.genai4pm2025.info/201.pdf). This step requires a personal API key. Get yours from [Google](https://support.google.com/googleapi/answer/6158862?hl=en), [OpenAI](https://platform.openai.com/login?next=%2Fapi-keys), or [Claude](https://platform.claude.com/docs/en/get-started), among others.
 
-* **BPMN import** — Well-formed BPMN models can be imported and converted to DCR graphs, helping users coming from imperative modeling notations transition into declarative process management.
+* **BPMN import** — To facilitate the exploration of the declarative mindset, now you can import BPMN models and convert them into equivalent DCR graphs. For more details on the BPMN features we support, please look at our [Formalise paper](https://dl.acm.org/doi/full/10.1145/3793656.3793684)
 
-* **Process discovery** — The parsing and pre-processing stages around discovery were re-engineered for performance: logs are streamed incrementally instead of being loaded whole, and equivalent traces are collapsed before discovery, enabling large real-world event logs to be mined entirely in the browser.
+* **Process discovery** — The parsing and pre-processing stages around discovery were re-engineered for performance: logs are streamed incrementally instead of being loaded in whole, and equivalent traces are collapsed before discovery, enabling large real-world event logs to be mined entirely in the browser.
 
 * **Simulation** — Step-based simulation extended with the time and data perspectives. When an event with an associated variable is executed, a pop-up prompts the user for a value. The simulation clock is user-controlled and can be advanced by a chosen amount. Traces can be exported as XES event logs including timestamps and variable values.
 
