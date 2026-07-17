@@ -2,9 +2,9 @@
 
 [Try it live!](https://kmvarvou.github.io/ProcessDoctor/)
 
-This repository extends [DCR-js](https://github.com/hugoalopez-dtu/dcr-js) with new features to support accessibility, expressiveness, and efficiency for declarative process management. It is developed at the Technical University of Denmark by Konstantinos Varvoutas, Julian Neuberger, and Hugo A. López, as described in the preprint:
+This repository extends [DCR-js](https://github.com/hugoalopez-dtu/dcr-js) with new features to support accessibility, expressiveness, and efficiency for declarative process management. It is developed at the Technical University of Denmark by Konstantinos Varvoutas, Julian Neuberger, and Hugo A. López, as described in the paper currently submitted for publication:
 
-> Varvoutas, K., Neuberger, J., López, H. A. Streamlining the education of Declarative Process Management with Process DoCtoR. International Conference on Business Process Management — Demos and Resources, 2026.
+> Varvoutas, K., Neuberger, J., López, H. A. Streamlining the education of Declarative Process Management with Process DoCtoR.
 
 The extensions cover the following areas of DCR-js:
 
