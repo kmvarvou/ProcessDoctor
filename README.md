@@ -31,7 +31,7 @@ A demo video of the extended version of DCR-js can be watched [here](https://dri
 To follow along with the demo video and try out the basic functionalities yourself, head to the [live app](https://kmvarvou.github.io/ProcessDoctor/). Example files for each functionality shown in the video are provided in the [`bpm_demo`](bpm_demo) folder:
 
 * **Modeling & Simulation** — `bpm_demo/Modeling_Simulation/Multi-perspective medical prescription.xml`
-* **BPMN import** — `bpm_demo/BPMN Import/test_xor_model.bpmn`
+* **BPMN import** — `bpm_demo/BPMN Import/ExampleFormalise.bpmn` and `bpm_demo/BPMN Import/test_xor_model.bpmn`
 * **Elicitation** — This feature requires setting up a personal OpenAI API key.
 * **Process discovery** — [BPI Challenge 2019 event log](https://drive.google.com/file/d/1OLfE6Z9pRyNjc4UIJZiYRbfOwkD0bf_C/view?usp=drive_link)
 * **Conformance checking** — `bpm_demo/Conformance/Multi-perspective medical prescription.xml` together with `bpm_demo/Conformance/test event log.xes`
