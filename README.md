@@ -25,7 +25,7 @@ What are DCR Graphs? A novel notation ideal for flexible processes, such as thos
 For a formal definition of DCR graphs, please [read this paper](https://arxiv.org/pdf/1110.4161.pdf).
 
 ## Instructions
-A demo video of the extended version of DCR-js can be watched [here](https://drive.google.com/file/d/1Bq_MyWjYrv3FAvXLdrEJDh0fllxPfiPd).
+A demo video of the extended version of Process Doctor can be watched [here](https://drive.google.com/file/d/1Bq_MyWjYrv3FAvXLdrEJDh0fllxPfiPd).
 
 ## Getting started
 To follow along with the demo video and try out the basic functionalities yourself, head to the [live app](https://kmvarvou.github.io/ProcessDoctor/). Example files for each functionality shown in the video are provided in the [`bpm_demo`](bpm_demo) folder:
