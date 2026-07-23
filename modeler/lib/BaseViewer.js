@@ -569,6 +569,7 @@ const update = (graph, modeling, elementReg, variableStore = {}, currentTime = n
         ? 'Deadline: ' + formatShortDate(deadline)
         : null;
       modeling.updateProperties(element, { deadlineLabel: deadlineLabel || undefined });
+      modeling.updateProperties(element, { deadlineOverdue: deadline instanceof Date && currentTime > deadline });
 
       // Delay label: latest delayUntil across all condition sources with a delay
       let latestDelayUntil = null;
@@ -696,7 +697,7 @@ BaseViewer.prototype.getElementRegistry = function () {
   return this.get('elementRegistry');
 }
 
-var FEEL_KEYWORDS_BV = new Set(['and', 'or', 'not', 'true', 'false']);
+var FEEL_KEYWORDS_BV = new Set(['and', 'or', 'not', 'true', 'false', 'if', 'then', 'else']);
 
 function extractGuardVarNamesBV(guard) {
   var stripped = guard.replace(/"[^"]*"/g, '""').replace(/'[^']*'/g, "''");
@@ -704,7 +705,7 @@ function extractGuardVarNamesBV(guard) {
   var m;
   var pat = /[A-Za-z_][A-Za-z0-9_]*/g;
   while ((m = pat.exec(stripped)) !== null) {
-    if (!FEEL_KEYWORDS_BV.has(m[0])) names.add(m[0]);
+    if (!FEEL_KEYWORDS_BV.has(m[0].toLowerCase())) names.add(m[0]);
   }
   return names;
 }
@@ -712,16 +713,20 @@ function extractGuardVarNamesBV(guard) {
 BaseViewer.prototype.validateGuards = function () {
   var elementRegistry = this.get('elementRegistry');
   var varNames = new Set();
+  var varTypes = {};
   elementRegistry.filter(function (el) { return el.type === 'dcr:Event'; }).forEach(function (el) {
     var ed = el.businessObject.get('eventData');
-    if (ed && ed.name) varNames.add(ed.name);
+    if (ed && ed.name) {
+      varNames.add(ed.name);
+      varTypes[ed.name] = ed.type || 'String';
+    }
   });
 
   var invalid = [];
   elementRegistry.filter(function (el) { return el.type === 'dcr:Relation'; }).forEach(function (el) {
     var guard = el.businessObject.get('guard');
     if (!guard) return;
-    var syntaxErr = validateGuardSyntax(guard);
+    var syntaxErr = validateGuardSyntax(guard, varTypes);
     if (syntaxErr) {
       invalid.push('Guard syntax error: ' + syntaxErr);
       return;

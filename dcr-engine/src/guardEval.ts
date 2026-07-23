@@ -22,6 +22,9 @@ type FEELToken =
   | { type: 'NOT' }
   | { type: 'TRUE' }
   | { type: 'FALSE' }
+  | { type: 'IF' }
+  | { type: 'THEN' }
+  | { type: 'ELSE' }
   | { type: 'EOF' };
 
 const UNDEF = Symbol('UNDEF');
@@ -57,11 +60,15 @@ function tokenizeFEEL(input: string): FEELToken[] {
       const start = i;
       while (i < input.length && /[A-Za-z0-9_]/.test(input[i])) i++;
       const word = input.slice(start, i);
-      if (word === 'and') tokens.push({ type: 'AND' });
-      else if (word === 'or') tokens.push({ type: 'OR' });
-      else if (word === 'not') tokens.push({ type: 'NOT' });
-      else if (word === 'true') tokens.push({ type: 'TRUE' });
-      else if (word === 'false') tokens.push({ type: 'FALSE' });
+      const lower = word.toLowerCase();
+      if (lower === 'and') tokens.push({ type: 'AND' });
+      else if (lower === 'or') tokens.push({ type: 'OR' });
+      else if (lower === 'not') tokens.push({ type: 'NOT' });
+      else if (lower === 'true') tokens.push({ type: 'TRUE' });
+      else if (lower === 'false') tokens.push({ type: 'FALSE' });
+      else if (lower === 'if') tokens.push({ type: 'IF' });
+      else if (lower === 'then') tokens.push({ type: 'THEN' });
+      else if (lower === 'else') tokens.push({ type: 'ELSE' });
       else tokens.push({ type: 'IDENT', value: word });
       continue;
     }
@@ -77,8 +84,7 @@ function feelEval(tokens: FEELToken[], store: VariableStore): boolean {
   const consume = (): FEELToken => tokens[pos++];
   const toBool = (v: FEELValue): boolean => v !== UNDEF && Boolean(v);
 
-  // All functions return FEELValue so arithmetic values survive parentheses.
-  // toBool is called at logical operator sites and at the top level.
+  
 
   function parseExpr(): FEELValue { return parseOr(); }
 
@@ -158,6 +164,15 @@ function feelEval(tokens: FEELToken[], store: VariableStore): boolean {
       if (peek().type === 'RPAREN') consume();
       return val;
     }
+    if (tok.type === 'IF') {
+      consume();
+      const cond = parseExpr();
+      if (peek().type === 'THEN') consume();
+      const thenBranch = parseExpr();
+      if (peek().type === 'ELSE') consume();
+      const elseBranch = parseExpr();
+      return toBool(cond) ? thenBranch : elseBranch;
+    }
     return UNDEF;
   }
 
@@ -176,17 +191,26 @@ export const evaluateGuard = (
   }
 };
 
-// Returns null if the expression is syntactically valid, or an error message if not.
-export const validateGuardSyntax = (expression: string): string | null => {
+export type GuardVarType = 'Int' | 'Bool' | 'String';
+export type GuardTypeMap = Record<string, GuardVarType>;
+
+const GENERIC_ERROR = 'Invalid guard syntax';
+
+// Returns null if the expression is syntactically valid, every referenced variable is present
+// in typeMap, and it is well-typed (e.g. rejects `boolVar + intVar`, `boolVar > 5`, and a non-Bool guard as a whole).
+export const validateGuardSyntax = (
+  expression: string,
+  typeMap: GuardTypeMap = {}
+): string | null => {
   if (!expression || expression.trim() === '') return null;
   const expr = decodeXMLEntities(expression).trim();
 
   let depth = 0;
   for (const ch of expr) {
     if (ch === '(') depth++;
-    else if (ch === ')') { depth--; if (depth < 0) return 'Unexpected closing parenthesis'; }
+    else if (ch === ')') { depth--; if (depth < 0) return GENERIC_ERROR; }
   }
-  if (depth > 0) return 'Missing closing parenthesis';
+  if (depth > 0) return GENERIC_ERROR;
 
   try {
     const tokens = tokenizeFEEL(expr);
@@ -194,40 +218,127 @@ export const validateGuardSyntax = (expression: string): string | null => {
     const peek = () => tokens[pos];
     const consume = () => tokens[pos++];
 
-    function parseE(): void { parseOr(); }
-    function parseOr(): void { parseAnd(); while (peek().type === 'OR') { consume(); parseAnd(); } }
-    function parseAnd(): void { parseNot(); while (peek().type === 'AND') { consume(); parseNot(); } }
-    function parseNot(): void {
-      if (peek().type === 'NOT') { consume(); parseNot(); return; }
-      parseComparison();
-    }
-    function parseComparison(): void {
-      parseAddSub();
-      if (peek().type === 'OP') { consume(); parseAddSub(); }
-    }
-    function parseAddSub(): void {
-      parseMul();
-      while (peek().type === 'ARITH' && (peek() as any).value !== '*') { consume(); parseMul(); }
-    }
-    function parseMul(): void {
-      parseAtom();
-      while (peek().type === 'ARITH' && (peek() as any).value === '*') { consume(); parseAtom(); }
-    }
-    function parseAtom(): void {
-      const tok = peek();
-      if (tok.type === 'NUMBER' || tok.type === 'STRING' || tok.type === 'TRUE' || tok.type === 'FALSE' || tok.type === 'IDENT') {
-        consume(); return;
+    const requireType = (type: GuardVarType, expected: GuardVarType): void => {
+      if (type !== expected) throw new Error(GENERIC_ERROR);
+    };
+
+    function parseE(): GuardVarType { return parseOr(); }
+
+    function parseOr(): GuardVarType {
+      let left = parseAnd();
+      while (peek().type === 'OR') {
+        consume();
+        const right = parseAnd();
+        requireType(left, 'Bool');
+        requireType(right, 'Bool');
+        left = 'Bool';
       }
-      if (tok.type === 'ARITH' && (tok as any).value === '-') { consume(); parseAtom(); return; }
-      if (tok.type === 'LPAREN') { consume(); parseE(); if (peek().type === 'RPAREN') consume(); return; }
-      throw new Error('Expected a variable, value, or expression');
+      return left;
     }
 
-    parseE();
-    if (peek().type !== 'EOF') return `Unexpected token "${expr.slice(tokens[pos].type === 'EOF' ? expr.length : pos)}"`;
+    function parseAnd(): GuardVarType {
+      let left = parseNot();
+      while (peek().type === 'AND') {
+        consume();
+        const right = parseNot();
+        requireType(left, 'Bool');
+        requireType(right, 'Bool');
+        left = 'Bool';
+      }
+      return left;
+    }
+
+    function parseNot(): GuardVarType {
+      if (peek().type === 'NOT') {
+        consume();
+        requireType(parseNot(), 'Bool');
+        return 'Bool';
+      }
+      return parseComparison();
+    }
+
+    function parseComparison(): GuardVarType {
+      const left = parseAddSub();
+      const opTok = peek();
+      if (opTok.type !== 'OP') return left;
+      consume();
+      const right = parseAddSub();
+      const op = (opTok as { type: 'OP'; value: string }).value;
+      if (op === '=' || op === '!=') {
+        if (left !== right) throw new Error(GENERIC_ERROR);
+      } else {
+        requireType(left, 'Int');
+        requireType(right, 'Int');
+      }
+      return 'Bool';
+    }
+
+    function parseAddSub(): GuardVarType {
+      let left = parseMul();
+      while (peek().type === 'ARITH' && (peek() as { type: 'ARITH'; value: string }).value !== '*') {
+        consume();
+        const right = parseMul();
+        requireType(left, 'Int');
+        requireType(right, 'Int');
+        left = 'Int';
+      }
+      return left;
+    }
+
+    function parseMul(): GuardVarType {
+      let left = parseAtom();
+      while (peek().type === 'ARITH' && (peek() as { type: 'ARITH'; value: string }).value === '*') {
+        consume();
+        const right = parseAtom();
+        requireType(left, 'Int');
+        requireType(right, 'Int');
+        left = 'Int';
+      }
+      return left;
+    }
+
+    function parseAtom(): GuardVarType {
+      const tok = peek();
+      if (tok.type === 'NUMBER') { consume(); return 'Int'; }
+      if (tok.type === 'STRING') { consume(); return 'String'; }
+      if (tok.type === 'TRUE')   { consume(); return 'Bool'; }
+      if (tok.type === 'FALSE')  { consume(); return 'Bool'; }
+      if (tok.type === 'IDENT')  {
+        consume();
+        const type = typeMap[tok.value];
+        if (type === undefined) throw new Error(GENERIC_ERROR);
+        return type;
+      }
+      if (tok.type === 'ARITH' && (tok as { type: 'ARITH'; value: string }).value === '-') {
+        consume();
+        requireType(parseAtom(), 'Int');
+        return 'Int';
+      }
+      if (tok.type === 'LPAREN') {
+        consume();
+        const inner = parseE();
+        if (peek().type === 'RPAREN') consume();
+        return inner;
+      }
+      if (tok.type === 'IF') {
+        consume();
+        requireType(parseE(), 'Bool');
+        if (peek().type === 'THEN') consume();
+        const thenBranch = parseE();
+        if (peek().type === 'ELSE') consume();
+        const elseBranch = parseE();
+        if (thenBranch !== elseBranch) throw new Error(GENERIC_ERROR);
+        return thenBranch;
+      }
+      throw new Error(GENERIC_ERROR);
+    }
+
+    const result = parseE();
+    if (peek().type !== 'EOF') return GENERIC_ERROR;
+    requireType(result, 'Bool');
     return null;
   } catch (e) {
-    return e instanceof Error ? e.message : 'Invalid guard expression';
+    return e instanceof Error ? e.message : GENERIC_ERROR;
   }
 };
 

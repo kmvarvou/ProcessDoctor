@@ -357,6 +357,10 @@ GuardsAndTimeProvider.prototype.openEventVariablesPanel = function(element) {
         if (errEl) errEl.textContent = 'Variable name is required.';
         return;
       }
+      if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(name)) {
+        if (errEl) errEl.textContent = 'Invalid variable name';
+        return;
+      }
       if (self._isVariableNameTakenElsewhere(name, element)) {
         if (errEl) errEl.textContent = 'Variable "' + name + '" is already declared on another event.';
         return;
@@ -378,7 +382,7 @@ GuardsAndTimeProvider.prototype.openEventVariablesPanel = function(element) {
 
 // ── Utility ───────────────────────────────────────────────────────────────
 
-var FEEL_KEYWORDS = new Set(['and', 'or', 'not', 'true', 'false']);
+var FEEL_KEYWORDS = new Set(['and', 'or', 'not', 'true', 'false', 'if', 'then', 'else']);
 
 function extractGuardVarNames(guardVal) {
   var stripped = guardVal.replace(/"[^"]*"/g, '""').replace(/'[^']*'/g, "''");
@@ -386,7 +390,7 @@ function extractGuardVarNames(guardVal) {
   var m;
   var pat = /[A-Za-z_][A-Za-z0-9_]*/g;
   while ((m = pat.exec(stripped)) !== null) {
-    if (!FEEL_KEYWORDS.has(m[0])) names.add(m[0]);
+    if (!FEEL_KEYWORDS.has(m[0].toLowerCase())) names.add(m[0]);
   }
   return names;
 }
@@ -403,6 +407,18 @@ GuardsAndTimeProvider.prototype._allVariableNames = function() {
   return names;
 };
 
+GuardsAndTimeProvider.prototype._allVariableTypes = function() {
+  var types = {};
+  this._elementRegistry.filter(function(el) {
+    return el.type === 'dcr:Event';
+  }).forEach(function(el) {
+    var bo = getBusinessObject(el);
+    var v = bo.get('eventData');
+    if (v && v.name) types[v.name] = v.type || 'String';
+  });
+  return types;
+};
+
 GuardsAndTimeProvider.prototype._isVariableNameTakenElsewhere = function(name, element) {
   return this._elementRegistry.filter(function(el) {
     return el.type === 'dcr:Event' && el !== element;
@@ -414,7 +430,7 @@ GuardsAndTimeProvider.prototype._isVariableNameTakenElsewhere = function(name, e
 
 GuardsAndTimeProvider.prototype._validateGuard = function(guardVal) {
   if (!guardVal) return null;
-  var syntaxErr = validateGuardSyntax(guardVal);
+  var syntaxErr = validateGuardSyntax(guardVal, this._allVariableTypes());
   if (syntaxErr) return syntaxErr;
   var knownVars = this._allVariableNames();
   var usedVars = extractGuardVarNames(guardVal);
