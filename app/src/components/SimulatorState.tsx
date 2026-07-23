@@ -661,7 +661,8 @@ const SimulatorState = ({
   }
 
   // Reads the deadline/delay obligations that applied to eventId just before it executes.
-  // Must run before executeS, since executeS clears the pending deadline on execution.
+  // Calculates the compliance of the execution of event and shows the corresponding flag/information 
+  // in trace view during Simulation.
   function computeExecutionCompliance(
     eventId: Event,
     graph: DCRGraphS,
@@ -672,11 +673,10 @@ const SimulatorState = ({
 
     const deadline = graph.marking.pending.get(eventId);
     if (deadline instanceof Date) {
-      compliance.deadline = { time: deadline, met: execTime < deadline };
+      compliance.deadline = { time: deadline, met: execTime <= deadline };
     }
 
-    // Unlike a deadline (discharged via marking.pending on execution), a condition-delay has
-    // no consumable state - it's rechecked independently on every execution of eventId.
+    
     let delayUntil: Date | undefined;
     for (const cEvent of graph.conditionsFor[eventId] ?? []) {
       if (!graph.marking.included.has(cEvent)) continue;
